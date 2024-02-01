@@ -39,3 +39,9 @@ function Contact(firstName, lastName, phoneNumber) {
 Contact.prototype.fullName = function() {
   return this.firstName + " " + this.lastName;
 };
+
+Contact.prototype.update = function(newFirstName, newLastName, newPhoneNumber) {
+  this.firstName = newFirstName,
+  this.lastName = newLastName,
+  this.phoneNumber = newPhoneNumber;
+};
