@@ -67,18 +67,11 @@ Test: It should create a new Address object.
 Code: let newAddress = new Address("1234 ABC Street", "home", "address")
 Expect: newAddress = { addressName: "1234 ABC Street", addressType: "home", addressCategory, "address" }
 
-Describe: Contact.prototype.addEmailAddress
-
-Test: It should add an email address Address object to a Contact.
-Code: 
-let newContact = new Contact("John", "Smith", "123-456-7890");
-newContact.addEmailAddress("johnsmith@email.com", "personal")
-Expect: newContact.addresses.emailAddresses[0] = {  }
-
 Describe: Contact.prototype.addAddress
 
-Test: It should add a home address Address object to a Contact.
+Test: It should add an Address object of emailAddress to a Contact.
 Code: 
 let newContact = new Contact("John", "Smith", "123-456-7890");
-newContact.addAddress("1234 ABC Street", "home")
-Expect: newContact.addresses = { address: "1234 ABC Street", addressType: "home" }
+let newEmailAddress = new Address("johnsmith@email.com", "personal", "email")
+newContact.addAddress(newEmailAddress)
+Expect: newContact.addresses.emailAddresses = [{ addressName: "johnsmith@email.com", addressType: "personal", addressCategory: "email" }]
