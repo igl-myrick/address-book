@@ -61,6 +61,12 @@ Contact.prototype.addAddress = function(address, addressType) {
   this.addresses.addressType = addressType;
 }
 
+function Address(addressName, addressType, addressCategory) {
+  this.addressName = addressName;
+  this.addressType = addressType;
+  this.addressCategory = addressCategory;
+}
+
 // UI Logic
 let addressBook = new AddressBook();
 
@@ -78,6 +84,57 @@ function listContacts(addressBookToDisplay) {
   contactsDiv.append(ul);
 }
 
+function addNewEmailFieldToForm() {
+  const allEmailsDiv = document.getElementById("email-addresses");
+
+  const newEmailWrapperDiv = document.createElement("div");
+  newEmailWrapperDiv.classList.add("email-address");
+
+  // create email address form group & add to wrapper
+  const newInputFormGroupDiv = document.createElement("div");
+  newInputFormGroupDiv.classList.add("form-group");
+
+  const newEmailLabel = document.createElement("label");
+  newEmailLabel.innerText = "Email Address:";
+
+  const newEmailInput = document.createElement("input");
+  newEmailInput.setAttribute("type", "text");
+  newEmailInput.setAttribute("class", "form-control");
+
+  newInputFormGroupDiv.appendChild(newEmailLabel);
+  newInputFormGroupDiv.appendChild(newEmailInput);
+  newEmailWrapperDiv.appendChild(newInputFormGroupDiv);
+
+  // create select list form group & add to wrapper
+  const newSelectFormGroupDiv = document.createElement("div");
+  newSelectFormGroupDiv.classList.add("form-group");
+
+  const newInputLabel = document.createElement("label");
+  newInputLabel.innerText = "Email Type: ";
+
+  const newSelectGroup = document.createElement("select");
+
+  const newOption1 = document.createElement("option");
+  newOption1.setAttribute("value", "personal");
+  newOption1.innerText = "Personal";
+
+  const newOption2 = document.createElement("option");
+  newOption2.setAttribute("value", "work");
+  newOption2.innerText = "Work";
+
+  const newOption3 = document.createElement("option");
+  newOption3.setAttribute("value", "school");
+  newOption3.innerText = "School";
+
+  newSelectGroup.append(newOption1, newOption2, newOption3);
+  newSelectFormGroupDiv.append(newInputLabel);
+  newSelectFormGroupDiv.append(newSelectGroup);
+  newEmailWrapperDiv.append(newSelectFormGroupDiv);
+
+  // add to DOM
+  allEmailsDiv.append(newEmailWrapperDiv);
+}
+
 function displayContactDetails(event) {
   const contact = addressBook.findContact(event.target.id);
   document.querySelector("#first-name").innerText = contact.firstName;
@@ -91,17 +148,29 @@ function displayContactDetails(event) {
   document.querySelector("div#contact-details").removeAttribute("class");
 }
 
+// TO-DO - Have email addresses use custom constructor + add to contact
+function getEmailAddresses() {
+  let emailAddresses = document.querySelectorAll(".email-address");
+
+  emailAddresses.forEach(function(element) {
+    const emailAddressValue = element.children[0].children[1].value
+    const emailAddressType = element.children[1].children[1].value
+
+  });
+}
+
 function handleFormSubmission(event) {
   event.preventDefault();
   const inputtedFirstName = document.querySelector("input#new-first-name").value;
   const inputtedLastName = document.querySelector("input#new-last-name").value;
   const inputtedPhoneNumber = document.querySelector("input#new-phone-number").value;
-  const inputtedEmailAddress = document.querySelector("input#new-email-address").value;
-  const inputtedEmailType = document.getElementById("email-type").value;
+  getEmailAddresses();
+  // const inputtedEmailAddress = document.querySelector("input#new-email-address").value;
+  // const inputtedEmailType = document.getElementById("email-type").value;
   const inputtedAddress = document.querySelector("input#new-address").value;
   const inputtedAddressType = document.getElementById("address-type").value;
   let newContact = new Contact(inputtedFirstName, inputtedLastName, inputtedPhoneNumber);
-  newContact.addEmailAddress(inputtedEmailAddress, inputtedEmailType);
+  // newContact.addEmailAddress(inputtedEmailAddress, inputtedEmailType);
   newContact.addAddress(inputtedAddress, inputtedAddressType);
   console.log(newContact)
   addressBook.addContact(newContact);
@@ -124,4 +193,5 @@ window.addEventListener("load", function() {
   document.querySelector("form#new-contact").addEventListener("submit", handleFormSubmission);
   document.querySelector("div#contacts").addEventListener("click", displayContactDetails);
   document.querySelector("button.delete").addEventListener("click", handleDelete);
+  document.querySelector("button#new-email-button").addEventListener("click", addNewEmailFieldToForm);
 });
