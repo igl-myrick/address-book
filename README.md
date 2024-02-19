@@ -75,3 +75,10 @@ let newContact = new Contact("John", "Smith", "123-456-7890");
 let newEmailAddress = new Address("johnsmith@email.com", "personal", "email")
 newContact.addAddress(newEmailAddress)
 Expect: newContact.addresses.emailAddresses = [{ addressName: "johnsmith@email.com", addressType: "personal", addressCategory: "email" }]
+
+Test: It should add an Address object of physicalAddress to a Contact.
+Code: 
+let newContact = new Contact("John", "Smith", "123-456-7890");
+let newPhysicalAddress = new Address("1234 ABC Street", "home", "physical")
+newContact.addAddress(newPhysicalAddress)
+Expect: newContact.addresses.physicalAddresses = [{ addressName: "1234 ABC Street", addressType: "home", addressCategory: "physical" }]
