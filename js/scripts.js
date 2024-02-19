@@ -31,12 +31,10 @@ AddressBook.prototype.deleteContact = function(id) {
 
 // Contacts Business Logic
 function Contact(firstName, lastName, phoneNumber) {
-  this.addresses = {};
+  this.addresses = { emailAddresses: [], physicalAddresses: [] };
   this.firstName = firstName;
   this.lastName = lastName;
   this.phoneNumber = phoneNumber;
-  this.addresses.emailAddress = [];
-  this.addresses.address = [];
 }
 
 Contact.prototype.fullName = function() {
@@ -51,14 +49,8 @@ Contact.prototype.update = function(newFirstName, newLastName, newPhoneNumber, n
   this.addresses.address = newAddress;
 };
 
-Contact.prototype.addEmailAddress = function(emailAddress, emailType) {
-  this.addresses.emailAddress = emailAddress;
-  this.addresses.emailType = emailType;
-}
-
-Contact.prototype.addAddress = function(address, addressType) {
-  this.addresses.address = address;
-  this.addresses.addressType = addressType;
+Contact.prototype.addAddress = function(address) {
+  this.addresses.emailAddresses.push(address);
 }
 
 function Address(addressName, addressType, addressCategory) {
