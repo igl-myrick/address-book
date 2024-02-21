@@ -227,12 +227,6 @@ function getPhysicalAddresses() {
   return physicalAddressesArray;
 }
 
-// create new function to get physical addresses from DOM
-// loop through returned addresses and add to contact
-// update displayContactDetails to show each address
-// get the addressList from DOM
-// append list item for each address
-
 function handleFormSubmission(event) {
   event.preventDefault();
   const inputtedFirstName = document.querySelector("input#new-first-name").value;
@@ -247,11 +241,9 @@ function handleFormSubmission(event) {
   })
   addressBook.addContact(newContact);
   listContacts(addressBook);
-  document.querySelector("input#new-first-name").value = null;
-  document.querySelector("input#new-last-name").value = null;
-  document.querySelector("input#new-phone-number").value = null;
-  document.querySelector("input#new-email-address").value = null;
-  document.querySelector("input#new-physical-address").value = null;
+  document.querySelectorAll("input").forEach(function(element) {
+    element.value = null;
+  });
 }
 
 function handleDelete(event) {
