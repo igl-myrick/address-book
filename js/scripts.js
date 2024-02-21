@@ -50,7 +50,11 @@ Contact.prototype.update = function(newFirstName, newLastName, newPhoneNumber, n
 };
 
 Contact.prototype.addAddress = function(address) {
-  this.addresses.emailAddresses.push(address);
+  if (address.addressCategory === "email") {
+    this.addresses.emailAddresses.push(address);
+  } else {
+    this.addresses.physicalAddresses.push(address);
+  }
 }
 
 function Address(addressName, addressType, addressCategory) {
@@ -127,51 +131,127 @@ function addNewEmailFieldToForm() {
   allEmailsDiv.append(newEmailWrapperDiv);
 }
 
+function addNewPhysicalAddressFieldToForm() {
+  const allPhysicalAddressesDiv = document.getElementById("physical-addresses");
+
+  const newPhysicalAddressWrapperDiv = document.createElement("div");
+  newPhysicalAddressWrapperDiv.classList.add("physical-address");
+
+  // create physical address form group & add to wrapper
+  const newInputFormGroupDiv = document.createElement("div");
+  newInputFormGroupDiv.classList.add("form-group");
+
+  const newPhysicalAddressLabel = document.createElement("label");
+  newPhysicalAddressLabel.innerText = "Address";
+  
+  const newPhysicalAddressInput = document.createElement("input");
+  newPhysicalAddressInput.setAttribute("type", "text");
+  newPhysicalAddressInput.setAttribute("class", "form-control");
+
+  newInputFormGroupDiv.appendChild(newPhysicalAddressLabel);
+  newInputFormGroupDiv.appendChild(newPhysicalAddressInput);
+  newPhysicalAddressWrapperDiv.appendChild(newInputFormGroupDiv);
+
+  // create select list form group & add to wrapper
+  const newSelectFormGroupDiv = document.createElement("div");
+  newSelectFormGroupDiv.classList.add("form-group");
+
+  const newInputLabel = document.createElement("label");
+  newInputLabel.innerText = "Address Type: ";
+
+  const newSelectGroup = document.createElement("select");
+
+  const newOption1 = document.createElement("option");
+  newOption1.setAttribute("value", "home");
+  newOption1.innerText = "Home";
+
+  const newOption2 = document.createElement("option");
+  newOption2.setAttribute("value", "business");
+  newOption2.innerText = "Business";
+
+  const newOption3 = document.createElement("option");
+  newOption3.setAttribute("value", "office");
+  newOption3.innerText = "Office";
+
+  newSelectGroup.append(newOption1, newOption2, newOption3);
+  newSelectFormGroupDiv.append(newInputLabel);
+  newSelectFormGroupDiv.append(newSelectGroup);
+  newPhysicalAddressWrapperDiv.append(newSelectFormGroupDiv);
+
+  // add to DOM
+  allPhysicalAddressesDiv.append(newPhysicalAddressWrapperDiv);
+}
+
 function displayContactDetails(event) {
   const contact = addressBook.findContact(event.target.id);
   document.querySelector("#first-name").innerText = contact.firstName;
   document.querySelector("#last-name").innerText = contact.lastName;
   document.querySelector("#phone-number").innerText = contact.phoneNumber;
-  document.querySelector("#email-address").innerText = contact.addresses.emailAddress;
-  document.querySelector("#email-type").value = contact.addresses.emailType;
-  document.querySelector("#address").innerText = contact.addresses.address;
-  document.querySelector("#address-type").value = contact.addresses.addressType;
+  const emailAddressesList = document.getElementById("email-addresses-list");
+  contact.addresses.emailAddresses.forEach(function(address) {
+    const li = document.createElement("li");
+    li.innerText = address.addressName + " (" + address.addressType + ")";
+    emailAddressesList.append(li);
+  });
+  const physicalAddressesList = document.getElementById("physical-addresses-list");
+  contact.addresses.physicalAddresses.forEach(function(address) {
+    const li = document.createElement("li");
+    li.innerText = address.addressName + " (" + address.addressType + ")"
+    physicalAddressesList.append(li);
+  });
   document.querySelector("button.delete").setAttribute("id", contact.id);
   document.querySelector("div#contact-details").removeAttribute("class");
 }
 
-// TO-DO - Have email addresses use custom constructor + add to contact
 function getEmailAddresses() {
   let emailAddresses = document.querySelectorAll(".email-address");
+  let emailAddressesArray = [];
 
   emailAddresses.forEach(function(element) {
-    const emailAddressValue = element.children[0].children[1].value
-    const emailAddressType = element.children[1].children[1].value
-
+    const emailAddressValue = element.children[0].children[1].value;
+    const emailAddressType = element.children[1].children[1].value;
+    emailAddressesArray.push(new Address(emailAddressValue, emailAddressType, "email"));
   });
+  return emailAddressesArray;
 }
+
+function getPhysicalAddresses() {
+  let physicalAddresses = document.querySelectorAll(".physical-address");
+  let physicalAddressesArray = [];
+
+  physicalAddresses.forEach(function(element) {
+    const physicalAddressValue = element.children[0].children[1].value;
+    const physicalAddressType = element.children[1].children[1].value;
+    physicalAddressesArray.push(new Address(physicalAddressValue, physicalAddressType, "physical"));
+  });
+  return physicalAddressesArray;
+}
+
+// create new function to get physical addresses from DOM
+// loop through returned addresses and add to contact
+// update displayContactDetails to show each address
+// get the addressList from DOM
+// append list item for each address
 
 function handleFormSubmission(event) {
   event.preventDefault();
   const inputtedFirstName = document.querySelector("input#new-first-name").value;
   const inputtedLastName = document.querySelector("input#new-last-name").value;
   const inputtedPhoneNumber = document.querySelector("input#new-phone-number").value;
-  getEmailAddresses();
-  // const inputtedEmailAddress = document.querySelector("input#new-email-address").value;
-  // const inputtedEmailType = document.getElementById("email-type").value;
-  const inputtedAddress = document.querySelector("input#new-address").value;
-  const inputtedAddressType = document.getElementById("address-type").value;
   let newContact = new Contact(inputtedFirstName, inputtedLastName, inputtedPhoneNumber);
-  // newContact.addEmailAddress(inputtedEmailAddress, inputtedEmailType);
-  newContact.addAddress(inputtedAddress, inputtedAddressType);
-  console.log(newContact)
+  getEmailAddresses().forEach(function(address) {
+    newContact.addAddress(address);
+  });
+  getPhysicalAddresses().forEach(function(address) {
+    newContact.addAddress(address);
+  })
   addressBook.addContact(newContact);
   listContacts(addressBook);
   document.querySelector("input#new-first-name").value = null;
   document.querySelector("input#new-last-name").value = null;
   document.querySelector("input#new-phone-number").value = null;
   document.querySelector("input#new-email-address").value = null;
-  document.querySelector("input#new-address").value = null;
+  document.querySelector("input#new-physical-address").value = null;
 }
 
 function handleDelete(event) {
@@ -186,4 +266,5 @@ window.addEventListener("load", function() {
   document.querySelector("div#contacts").addEventListener("click", displayContactDetails);
   document.querySelector("button.delete").addEventListener("click", handleDelete);
   document.querySelector("button#new-email-button").addEventListener("click", addNewEmailFieldToForm);
+  document.querySelector("button#new-physical-address-button").addEventListener("click", addNewPhysicalAddressFieldToForm);
 });
