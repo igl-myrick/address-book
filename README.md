@@ -13,7 +13,7 @@
 
 ## Description
 
-_A webpage designed to mimic an address book. You can add contacts, and store their name, phone number, email addresses, and physical addresses._
+_A webpage designed to mimic an address book. You can add contacts and store their name, phone number, email addresses, and physical addresses._
 
 ## Setup/Installation Requirements
 
